@@ -13,3 +13,75 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model users {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  firstName String   @db.VarChar(50)
+  lastName  String   @db.VarChar(50)
+  password  String   @db.VarChar(255)
+  method_login String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  polls    polls[]
+  responses responses[]
+}
+
+model polls {
+  id         Int      @id @default(autoincrement())
+  title      String   @db.VarChar(100)
+  description String   @db.VarChar(255)
+  status     String   @db.VarChar(50)
+  creator   users    @relation(fields: [creatorId], references: [id])
+  creatorId  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  questions questions[]
+  responses responses[]
+}
+
+model questions {
+  id        Int      @id @default(autoincrement())
+  type      String   @db.VarChar(50)
+  poll      polls    @relation(fields: [pollId], references: [id])
+  pollId    Int
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  options   options[]
+  responses responses[]
+}
+
+model options {
+  id        Int      @id @default(autoincrement())
+  question  questions @relation(fields: [questionId], references: [id])
+  questionId Int
+  text      String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  responses responses[]
+}
+
+model responses {
+  id        Int      @id @default(autoincrement())
+  poll      polls    @relation(fields: [pollId], references: [id])
+  pollId    Int
+  question  questions @relation(fields: [questionId], references: [id])
+  questionId Int
+  user      users    @relation(fields: [userId], references: [id])
+  userId    Int
+  option   options  @relation(fields: [optionId], references: [id])
+  optionId  Int
+  response String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+}
+
+model roles {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(50)
+  description String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
