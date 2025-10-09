@@ -1,8 +1,9 @@
-const { PrismaClient } = require('../../generated/prisma');
+import { PrismaClient, polls, questions, responses } from '../../generated/prisma';
+
 const prisma = new PrismaClient();
 
-class PollService {
-  async getAllPolls() {
+export class PollService {
+  async getAllPolls(): Promise<polls[]> {
     return await prisma.polls.findMany({
       include: {
         creator: {
@@ -23,7 +24,7 @@ class PollService {
     });
   }
 
-  async getPollById(id) {
+  async getPollById(id: number): Promise<polls | null> {
     return await prisma.polls.findUnique({
       where: { id },
       include: {
@@ -58,7 +59,7 @@ class PollService {
     });
   }
 
-  async createPoll(pollData) {
+  async createPoll(pollData: Omit<polls, 'id' | 'createdAt' | 'updatedAt'>): Promise<polls> {
     return await prisma.polls.create({
       data: pollData,
       include: {
@@ -74,7 +75,7 @@ class PollService {
     });
   }
 
-  async updatePoll(id, pollData) {
+  async updatePoll(id: number, pollData: Partial<Omit<polls, 'id' | 'createdAt' | 'updatedAt'>>): Promise<polls> {
     return await prisma.polls.update({
       where: { id },
       data: pollData,
@@ -92,13 +93,13 @@ class PollService {
     });
   }
 
-  async deletePoll(id) {
+  async deletePoll(id: number): Promise<polls> {
     return await prisma.polls.delete({
       where: { id },
     });
   }
 
-  async getPollQuestions(pollId) {
+  async getPollQuestions(pollId: number): Promise<questions[]> {
     return await prisma.questions.findMany({
       where: { pollId },
       include: {
@@ -108,7 +109,7 @@ class PollService {
     });
   }
 
-  async getPollResponses(pollId) {
+  async getPollResponses(pollId: number): Promise<responses[]> {
     return await prisma.responses.findMany({
       where: { pollId },
       include: {
@@ -126,7 +127,7 @@ class PollService {
     });
   }
 
-  async getPollsByUser(userId) {
+  async getPollsByUser(userId: number): Promise<polls[]> {
     return await prisma.polls.findMany({
       where: { creatorId: userId },
       include: {
@@ -136,7 +137,7 @@ class PollService {
     });
   }
 
-  async getPollsByStatus(status) {
+  async getPollsByStatus(status: string): Promise<polls[]> {
     return await prisma.polls.findMany({
       where: { status },
       include: {
@@ -154,4 +155,4 @@ class PollService {
   }
 }
 
-module.exports = new PollService();
+export default new PollService();

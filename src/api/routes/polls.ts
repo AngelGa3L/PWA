@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const PollsController = require('../controllers/PollsController');
+import { Router } from 'express';
+import PollsController from '../controllers/PollsController';
+
+const router = Router();
 
 // GET /api/polls - Get all polls
 router.get('/', PollsController.getAllPolls);
@@ -26,4 +27,4 @@ router.get('/:id/responses', PollsController.getPollResponses);
 // GET /api/polls/user/:userId - Get polls by user
 router.get('/user/:userId', PollsController.getPollsByUser);
 
-module.exports = router;
+export default router;

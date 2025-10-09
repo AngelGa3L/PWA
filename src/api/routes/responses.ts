@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const ResponsesController = require('../controllers/ResponsesController');
+import { Router } from 'express';
+import ResponsesController from '../controllers/ResponsesController';
+
+const router = Router();
 
 // GET /api/responses - Get all responses
 router.get('/', ResponsesController.getAllResponses);
@@ -23,4 +24,4 @@ router.get('/poll/:pollId', ResponsesController.getResponsesByPoll);
 // GET /api/responses/user/:userId - Get responses by user
 router.get('/user/:userId', ResponsesController.getResponsesByUser);
 
-module.exports = router;
+export default router;

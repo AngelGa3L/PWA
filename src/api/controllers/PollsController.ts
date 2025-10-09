@@ -1,88 +1,90 @@
-const PollService = require('../services/PollService');
+import { Request, Response } from 'express';
+import PollService from '../services/PollService';
 
-class PollsController {
-  async getAllPolls(req, res) {
+export class PollsController {
+  async getAllPolls(req: Request, res: Response): Promise<void> {
     try {
       const polls = await PollService.getAllPolls();
       res.json(polls);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getPollById(req, res) {
+  async getPollById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const poll = await PollService.getPollById(parseInt(id));
       if (!poll) {
-        return res.status(404).json({ error: 'Poll not found' });
+        res.status(404).json({ error: 'Poll not found' });
+        return;
       }
       res.json(poll);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async createPoll(req, res) {
+  async createPoll(req: Request, res: Response): Promise<void> {
     try {
       const pollData = req.body;
       const newPoll = await PollService.createPoll(pollData);
       res.status(201).json(newPoll);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async updatePoll(req, res) {
+  async updatePoll(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const pollData = req.body;
       const updatedPoll = await PollService.updatePoll(parseInt(id), pollData);
       res.json(updatedPoll);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async deletePoll(req, res) {
+  async deletePoll(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       await PollService.deletePoll(parseInt(id));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async getPollQuestions(req, res) {
+  async getPollQuestions(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const questions = await PollService.getPollQuestions(parseInt(id));
       res.json(questions);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getPollResponses(req, res) {
+  async getPollResponses(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const responses = await PollService.getPollResponses(parseInt(id));
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getPollsByUser(req, res) {
+  async getPollsByUser(req: Request, res: Response): Promise<void> {
     try {
       const { userId } = req.params;
       const polls = await PollService.getPollsByUser(parseInt(userId));
       res.json(polls);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 }
 
-module.exports = new PollsController();
+export default new PollsController();

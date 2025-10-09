@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const OptionsController = require('../controllers/OptionsController');
+import { Router } from 'express';
+import OptionsController from '../controllers/OptionsController';
+
+const router = Router();
 
 // GET /api/options - Get all options
 router.get('/', OptionsController.getAllOptions);
@@ -20,4 +21,4 @@ router.delete('/:id', OptionsController.deleteOption);
 // GET /api/options/:id/responses - Get responses for an option
 router.get('/:id/responses', OptionsController.getOptionResponses);
 
-module.exports = router;
+export default router;

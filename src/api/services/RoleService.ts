@@ -1,8 +1,9 @@
-const { PrismaClient } = require('../../generated/prisma');
+import { PrismaClient, roles } from '../../generated/prisma';
+
 const prisma = new PrismaClient();
 
-class RoleService {
-  async getAllRoles() {
+export class RoleService {
+  async getAllRoles(): Promise<roles[]> {
     return await prisma.roles.findMany({
       orderBy: {
         name: 'asc',
@@ -10,51 +11,49 @@ class RoleService {
     });
   }
 
-  async getRoleById(id) {
+  async getRoleById(id: number): Promise<roles | null> {
     return await prisma.roles.findUnique({
       where: { id },
     });
   }
 
-  async getRoleByName(name) {
+  async getRoleByName(name: string): Promise<roles | null> {
     return await prisma.roles.findUnique({
       where: { name },
     });
   }
 
-  async createRole(roleData) {
+  async createRole(roleData: Omit<roles, 'id' | 'createdAt' | 'updatedAt'>): Promise<roles> {
     return await prisma.roles.create({
       data: roleData,
     });
   }
 
-  async updateRole(id, roleData) {
+  async updateRole(id: number, roleData: Partial<Omit<roles, 'id' | 'createdAt' | 'updatedAt'>>): Promise<roles> {
     return await prisma.roles.update({
       where: { id },
       data: roleData,
     });
   }
 
-  async deleteRole(id) {
+  async deleteRole(id: number): Promise<roles> {
     return await prisma.roles.delete({
       where: { id },
     });
   }
 
-  async searchRoles(searchTerm) {
+  async searchRoles(searchTerm: string): Promise<roles[]> {
     return await prisma.roles.findMany({
       where: {
         OR: [
           {
             name: {
               contains: searchTerm,
-              mode: 'insensitive',
             },
           },
           {
             description: {
               contains: searchTerm,
-              mode: 'insensitive',
             },
           },
         ],
@@ -66,4 +65,4 @@ class RoleService {
   }
 }
 
-module.exports = new RoleService();
+export default new RoleService();

@@ -1,8 +1,9 @@
-const { PrismaClient } = require('../../generated/prisma');
+import { PrismaClient, users, polls, responses } from '../../generated/prisma';
+
 const prisma = new PrismaClient();
 
-class UserService {
-  async getAllUsers() {
+export class UserService {
+  async getAllUsers(): Promise<users[]> {
     return await prisma.users.findMany({
       include: {
         polls: true,
@@ -11,7 +12,7 @@ class UserService {
     });
   }
 
-  async getUserById(id) {
+  async getUserById(id: number): Promise<users | null> {
     return await prisma.users.findUnique({
       where: { id },
       include: {
@@ -21,26 +22,26 @@ class UserService {
     });
   }
 
-  async createUser(userData) {
+  async createUser(userData: Omit<users, 'id' | 'createdAt' | 'updatedAt'>): Promise<users> {
     return await prisma.users.create({
       data: userData,
     });
   }
 
-  async updateUser(id, userData) {
+  async updateUser(id: number, userData: Partial<Omit<users, 'id' | 'createdAt' | 'updatedAt'>>): Promise<users> {
     return await prisma.users.update({
       where: { id },
       data: userData,
     });
   }
 
-  async deleteUser(id) {
+  async deleteUser(id: number): Promise<users> {
     return await prisma.users.delete({
       where: { id },
     });
   }
 
-  async getUserPolls(userId) {
+  async getUserPolls(userId: number): Promise<polls[]> {
     return await prisma.polls.findMany({
       where: { creatorId: userId },
       include: {
@@ -50,7 +51,7 @@ class UserService {
     });
   }
 
-  async getUserResponses(userId) {
+  async getUserResponses(userId: number): Promise<responses[]> {
     return await prisma.responses.findMany({
       where: { userId },
       include: {
@@ -61,11 +62,11 @@ class UserService {
     });
   }
 
-  async getUserByEmail(email) {
+  async getUserByEmail(email: string): Promise<users | null> {
     return await prisma.users.findUnique({
       where: { email },
     });
   }
 }
 
-module.exports = new UserService();
+export default new UserService();

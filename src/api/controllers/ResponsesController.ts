@@ -1,78 +1,80 @@
-const ResponseService = require('../services/ResponseService');
+import { Request, Response } from 'express';
+import ResponseService from '../services/ResponseService';
 
-class ResponsesController {
-  async getAllResponses(req, res) {
+export class ResponsesController {
+  async getAllResponses(req: Request, res: Response): Promise<void> {
     try {
       const responses = await ResponseService.getAllResponses();
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getResponseById(req, res) {
+  async getResponseById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const response = await ResponseService.getResponseById(parseInt(id));
       if (!response) {
-        return res.status(404).json({ error: 'Response not found' });
+        res.status(404).json({ error: 'Response not found' });
+        return;
       }
       res.json(response);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async createResponse(req, res) {
+  async createResponse(req: Request, res: Response): Promise<void> {
     try {
       const responseData = req.body;
       const newResponse = await ResponseService.createResponse(responseData);
       res.status(201).json(newResponse);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async updateResponse(req, res) {
+  async updateResponse(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const responseData = req.body;
       const updatedResponse = await ResponseService.updateResponse(parseInt(id), responseData);
       res.json(updatedResponse);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async deleteResponse(req, res) {
+  async deleteResponse(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       await ResponseService.deleteResponse(parseInt(id));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async getResponsesByPoll(req, res) {
+  async getResponsesByPoll(req: Request, res: Response): Promise<void> {
     try {
       const { pollId } = req.params;
       const responses = await ResponseService.getResponsesByPoll(parseInt(pollId));
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getResponsesByUser(req, res) {
+  async getResponsesByUser(req: Request, res: Response): Promise<void> {
     try {
       const { userId } = req.params;
       const responses = await ResponseService.getResponsesByUser(parseInt(userId));
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 }
 
-module.exports = new ResponsesController();
+export default new ResponsesController();

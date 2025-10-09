@@ -1,78 +1,80 @@
-const UserService = require('../services/UserService');
+import { Request, Response } from 'express';
+import UserService from '../services/UserService';
 
-class UsersController {
-  async getAllUsers(req, res) {
+export class UsersController {
+  async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
       const users = await UserService.getAllUsers();
       res.json(users);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getUserById(req, res) {
+  async getUserById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const user = await UserService.getUserById(parseInt(id));
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: 'User not found' });
+        return;
       }
       res.json(user);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async createUser(req, res) {
+  async createUser(req: Request, res: Response): Promise<void> {
     try {
       const userData = req.body;
       const newUser = await UserService.createUser(userData);
       res.status(201).json(newUser);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async updateUser(req, res) {
+  async updateUser(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const userData = req.body;
       const updatedUser = await UserService.updateUser(parseInt(id), userData);
       res.json(updatedUser);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async deleteUser(req, res) {
+  async deleteUser(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       await UserService.deleteUser(parseInt(id));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async getUserPolls(req, res) {
+  async getUserPolls(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const polls = await UserService.getUserPolls(parseInt(id));
       res.json(polls);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getUserResponses(req, res) {
+  async getUserResponses(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const responses = await UserService.getUserResponses(parseInt(id));
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 }
 
-module.exports = new UsersController();
+export default new UsersController();

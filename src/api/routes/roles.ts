@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const RolesController = require('../controllers/RolesController');
+import { Router } from 'express';
+import RolesController from '../controllers/RolesController';
+
+const router = Router();
 
 // GET /api/roles - Get all roles
 router.get('/', RolesController.getAllRoles);
@@ -17,4 +18,4 @@ router.put('/:id', RolesController.updateRole);
 // DELETE /api/roles/:id - Delete role
 router.delete('/:id', RolesController.deleteRole);
 
-module.exports = router;
+export default router;

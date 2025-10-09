@@ -1,8 +1,9 @@
-const { PrismaClient } = require('../../generated/prisma');
+import { PrismaClient, options, responses } from '../../generated/prisma';
+
 const prisma = new PrismaClient();
 
-class OptionService {
-  async getAllOptions() {
+export class OptionService {
+  async getAllOptions(): Promise<options[]> {
     return await prisma.options.findMany({
       include: {
         question: {
@@ -23,7 +24,7 @@ class OptionService {
     });
   }
 
-  async getOptionById(id) {
+  async getOptionById(id: number): Promise<options | null> {
     return await prisma.options.findUnique({
       where: { id },
       include: {
@@ -54,7 +55,7 @@ class OptionService {
     });
   }
 
-  async createOption(optionData) {
+  async createOption(optionData: Omit<options, 'id' | 'createdAt' | 'updatedAt'>): Promise<options> {
     return await prisma.options.create({
       data: optionData,
       include: {
@@ -63,7 +64,7 @@ class OptionService {
     });
   }
 
-  async updateOption(id, optionData) {
+  async updateOption(id: number, optionData: Partial<Omit<options, 'id' | 'createdAt' | 'updatedAt'>>): Promise<options> {
     return await prisma.options.update({
       where: { id },
       data: optionData,
@@ -73,13 +74,13 @@ class OptionService {
     });
   }
 
-  async deleteOption(id) {
+  async deleteOption(id: number): Promise<options> {
     return await prisma.options.delete({
       where: { id },
     });
   }
 
-  async getOptionResponses(optionId) {
+  async getOptionResponses(optionId: number): Promise<responses[]> {
     return await prisma.responses.findMany({
       where: { optionId },
       include: {
@@ -97,7 +98,7 @@ class OptionService {
     });
   }
 
-  async getOptionsByQuestion(questionId) {
+  async getOptionsByQuestion(questionId: number): Promise<options[]> {
     return await prisma.options.findMany({
       where: { questionId },
       include: {
@@ -106,11 +107,11 @@ class OptionService {
     });
   }
 
-  async getOptionResponseCount(optionId) {
+  async getOptionResponseCount(optionId: number): Promise<number> {
     return await prisma.responses.count({
       where: { optionId },
     });
   }
 }
 
-module.exports = new OptionService();
+export default new OptionService();

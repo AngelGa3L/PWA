@@ -1,68 +1,70 @@
-const OptionService = require('../services/OptionService');
+import { Request, Response } from 'express';
+import OptionService from '../services/OptionService';
 
-class OptionsController {
-  async getAllOptions(req, res) {
+export class OptionsController {
+  async getAllOptions(req: Request, res: Response): Promise<void> {
     try {
       const options = await OptionService.getAllOptions();
       res.json(options);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getOptionById(req, res) {
+  async getOptionById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const option = await OptionService.getOptionById(parseInt(id));
       if (!option) {
-        return res.status(404).json({ error: 'Option not found' });
+        res.status(404).json({ error: 'Option not found' });
+        return;
       }
       res.json(option);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async createOption(req, res) {
+  async createOption(req: Request, res: Response): Promise<void> {
     try {
       const optionData = req.body;
       const newOption = await OptionService.createOption(optionData);
       res.status(201).json(newOption);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async updateOption(req, res) {
+  async updateOption(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const optionData = req.body;
       const updatedOption = await OptionService.updateOption(parseInt(id), optionData);
       res.json(updatedOption);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async deleteOption(req, res) {
+  async deleteOption(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       await OptionService.deleteOption(parseInt(id));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  async getOptionResponses(req, res) {
+  async getOptionResponses(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       const responses = await OptionService.getOptionResponses(parseInt(id));
       res.json(responses);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 }
 
-module.exports = new OptionsController();
+export default new OptionsController();

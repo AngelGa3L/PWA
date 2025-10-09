@@ -1,8 +1,9 @@
-const { PrismaClient } = require('../../generated/prisma');
+import { PrismaClient, questions, options, responses } from '../../generated/prisma';
+
 const prisma = new PrismaClient();
 
-class QuestionService {
-  async getAllQuestions() {
+export class QuestionService {
+  async getAllQuestions(): Promise<questions[]> {
     return await prisma.questions.findMany({
       include: {
         poll: {
@@ -18,7 +19,7 @@ class QuestionService {
     });
   }
 
-  async getQuestionById(id) {
+  async getQuestionById(id: number): Promise<questions | null> {
     return await prisma.questions.findUnique({
       where: { id },
       include: {
@@ -55,7 +56,7 @@ class QuestionService {
     });
   }
 
-  async createQuestion(questionData) {
+  async createQuestion(questionData: Omit<questions, 'id' | 'createdAt' | 'updatedAt'>): Promise<questions> {
     return await prisma.questions.create({
       data: questionData,
       include: {
@@ -65,7 +66,7 @@ class QuestionService {
     });
   }
 
-  async updateQuestion(id, questionData) {
+  async updateQuestion(id: number, questionData: Partial<Omit<questions, 'id' | 'createdAt' | 'updatedAt'>>): Promise<questions> {
     return await prisma.questions.update({
       where: { id },
       data: questionData,
@@ -76,13 +77,13 @@ class QuestionService {
     });
   }
 
-  async deleteQuestion(id) {
+  async deleteQuestion(id: number): Promise<questions> {
     return await prisma.questions.delete({
       where: { id },
     });
   }
 
-  async getQuestionOptions(questionId) {
+  async getQuestionOptions(questionId: number): Promise<options[]> {
     return await prisma.options.findMany({
       where: { questionId },
       include: {
@@ -91,7 +92,7 @@ class QuestionService {
     });
   }
 
-  async getQuestionResponses(questionId) {
+  async getQuestionResponses(questionId: number): Promise<responses[]> {
     return await prisma.responses.findMany({
       where: { questionId },
       include: {
@@ -108,7 +109,7 @@ class QuestionService {
     });
   }
 
-  async getQuestionsByPoll(pollId) {
+  async getQuestionsByPoll(pollId: number): Promise<questions[]> {
     return await prisma.questions.findMany({
       where: { pollId },
       include: {
@@ -118,7 +119,7 @@ class QuestionService {
     });
   }
 
-  async getQuestionsByType(type) {
+  async getQuestionsByType(type: string): Promise<questions[]> {
     return await prisma.questions.findMany({
       where: { type },
       include: {
@@ -129,4 +130,4 @@ class QuestionService {
   }
 }
 
-module.exports = new QuestionService();
+export default new QuestionService();

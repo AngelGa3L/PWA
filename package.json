@@ -4,15 +4,23 @@
   "description": "pwa",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon --exec ts-node index.ts",
+    "start": "node index.js",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AngelGa3L",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.7.1",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "prisma": "^6.16.3"
+    "nodemon": "^3.1.10",
+    "prisma": "^6.16.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
