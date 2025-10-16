@@ -1,4 +1,5 @@
 import { PrismaClient, users, polls, responses } from '../../generated/prisma';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -22,9 +23,17 @@ export class UserService {
     });
   }
 
-  async createUser(userData: Omit<users, 'id' | 'createdAt' | 'updatedAt'>): Promise<users> {
+  async createUser(userData: { email: string, lastName: string, firstName: string, password: string, method_login: string }): Promise<users> {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    
     return await prisma.users.create({
-      data: userData,
+      data: {
+        email: userData.email,
+        lastName: userData.lastName,
+        firstName: userData.firstName,
+        password: hashedPassword,
+        method_login: userData.method_login
+      },
     });
   }
 

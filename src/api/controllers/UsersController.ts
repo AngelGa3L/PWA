@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import UserService from '../services/UserService';
+import { Request, Response } from "express";
+import UserService from "../services/UserService";
 
 export class UsersController {
   async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -16,7 +16,7 @@ export class UsersController {
       const { id } = req.params;
       const user = await UserService.getUserById(parseInt(id));
       if (!user) {
-        res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: "User not found" });
         return;
       }
       res.json(user);
@@ -27,9 +27,20 @@ export class UsersController {
 
   async createUser(req: Request, res: Response): Promise<void> {
     try {
-      const userData = req.body;
-      const newUser = await UserService.createUser(userData);
-      res.status(201).json(newUser);
+      const { email, lastName, firstName, password, method_login } = req.body;
+      const newUser = await UserService.createUser({ email, lastName, firstName, password, method_login });
+      res
+        .status(201)
+        .json({
+          data: {
+            id: newUser.id,
+            email: newUser.email,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            createdAt: newUser.createdAt,
+          },
+          msg: "Usuario creado exitosamente"
+        });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

@@ -7,37 +7,39 @@ import { handleValidationErrors } from "../middlewares/Validator";
 const router = Router();
 
 const userValidation = [
-  body("email").isEmail().withMessage("Formato de email inválido"),
+  body("email")
+    .isEmail()
+    .withMessage("Formato de email inválido")
+    .notEmpty()
+    .withMessage("El email es obligatorio"),
   body("firstName").notEmpty().withMessage("El nombre es obligatorio"),
   body("lastName").notEmpty().withMessage("El apellido es obligatorio"),
   body("password")
     .isLength({ min: 8 })
-    .withMessage("La contraseña debe tener al menos 8 caracteres"),
+    .withMessage("La contraseña debe tener al menos 8 caracteres")
+    .notEmpty()
+    .withMessage("La contraseña es obligatoria")
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>\/?]).{8,}$/
+    )
+    .withMessage(
+      "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
+    )
+    .withMessage(
+      "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
+    ),
   body("method_login")
     .notEmpty()
     .withMessage("El método de inicio de sesión es obligatorio"),
   handleValidationErrors,
 ];
 
-// GET /api/users - Get all users
 router.get("/", UsersController.getAllUsers);
-
-// GET /api/users/:id - Get user by ID
 router.get("/:id", UsersController.getUserById);
-
-// POST /api/users - Create new user
 router.post("/", userValidation, UsersController.createUser);
-
-// PUT /api/users/:id - Update user
 router.put("/:id", UsersController.updateUser);
-
-// DELETE /api/users/:id - Delete user
 router.delete("/:id", UsersController.deleteUser);
-
-// GET /api/users/:id/polls - Get polls created by user
 router.get("/:id/polls", UsersController.getUserPolls);
-
-// GET /api/users/:id/responses - Get responses by user
 router.get("/:id/responses", UsersController.getUserResponses);
 
 export default router;
