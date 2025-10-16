@@ -28,9 +28,6 @@ const userValidation = [
     .withMessage(
       "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
     ),
-  body("method_login")
-    .notEmpty()
-    .withMessage("El método de inicio de sesión es obligatorio"),
   handleValidationErrors,
 ];
 
