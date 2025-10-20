@@ -5,10 +5,12 @@ import QuestionRoutes  from './src/api/routes/questions';
 import PollRoutes  from './src/api/routes/polls';
 import ResponseRoutes  from './src/api/routes/responses';
 import OptionRoutes  from './src/api/routes/options';
+import AuthRoutes  from './src/api/routes/auth';
 const app = express()
 const port = 3000
 
 app.use(express.json());
+app.use('/api/auth', AuthRoutes);
 app.use('/api/users', UserRoutes);
 app.use('/api/roles', RoleRoutes);
 app.use('/api/questions', QuestionRoutes);

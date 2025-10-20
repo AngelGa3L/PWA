@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -15,75 +9,88 @@ datasource db {
 }
 
 model users {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  firstName String   @db.VarChar(50)
-  lastName  String   @db.VarChar(50)
-  password  String   @db.VarChar(255)
-  method_login String   @db.VarChar(50)
-  roleId      Int
-  role      roles    @relation(fields: [roleId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  polls    polls[]
-  responses responses[]
+  id           Int         @id @default(autoincrement())
+  email        String      @unique
+  firstName    String      @db.VarChar(50)
+  lastName     String      @db.VarChar(50)
+  password     String      @db.VarChar(255)
+  method_login String      @db.VarChar(50)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  roleId       Int
+  polls        polls[]
+  responses    responses[]
+  role         roles       @relation(fields: [roleId], references: [id])
+
+  @@index([roleId], map: "users_roleId_fkey")
 }
 
 model polls {
-  id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)
-  description String   @db.VarChar(255)
-  status     String   @db.VarChar(50)
-  creator   users    @relation(fields: [creatorId], references: [id])
-  creatorId  Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  questions questions[]
-  responses responses[]
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(100)
+  description String      @db.VarChar(255)
+  status      String      @db.VarChar(50)
+  creatorId   Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  creator     users       @relation(fields: [creatorId], references: [id])
+  questions   questions[]
+  responses   responses[]
+
+  @@index([creatorId], map: "polls_creatorId_fkey")
 }
 
 model questions {
-  id        Int      @id @default(autoincrement())
-  type      String   @db.VarChar(50)
-  poll      polls    @relation(fields: [pollId], references: [id])
+  id        Int         @id @default(autoincrement())
+  type      String      @db.VarChar(50)
   pollId    Int
-  title     String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  title     String      @db.VarChar(255)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   options   options[]
+  poll      polls       @relation(fields: [pollId], references: [id])
   responses responses[]
+
+  @@index([pollId], map: "questions_pollId_fkey")
 }
 
 model options {
-  id        Int      @id @default(autoincrement())
-  question  questions @relation(fields: [questionId], references: [id])
+  id         Int         @id @default(autoincrement())
   questionId Int
-  text      String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  responses responses[]
+  text       String      @db.VarChar(255)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  question   questions   @relation(fields: [questionId], references: [id])
+  responses  responses[]
+
+  @@index([questionId], map: "options_questionId_fkey")
 }
 
 model responses {
-  id        Int      @id @default(autoincrement())
-  poll      polls    @relation(fields: [pollId], references: [id])
-  pollId    Int
-  question  questions @relation(fields: [questionId], references: [id])
+  id         Int       @id @default(autoincrement())
+  pollId     Int
   questionId Int
-  user      users    @relation(fields: [userId], references: [id])
-  userId    Int
-  option   options  @relation(fields: [optionId], references: [id])
-  optionId  Int
-  response String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId     Int
+  optionId   Int
+  response   String    @db.VarChar(255)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  option     options   @relation(fields: [optionId], references: [id])
+  poll       polls     @relation(fields: [pollId], references: [id])
+  question   questions @relation(fields: [questionId], references: [id])
+  user       users     @relation(fields: [userId], references: [id])
+
+  @@index([optionId], map: "responses_optionId_fkey")
+  @@index([pollId], map: "responses_pollId_fkey")
+  @@index([questionId], map: "responses_questionId_fkey")
+  @@index([userId], map: "responses_userId_fkey")
 }
 
 model roles {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique @db.VarChar(50)
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50)
   description String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     users[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       users[]
 }
