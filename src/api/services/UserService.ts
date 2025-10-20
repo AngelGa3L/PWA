@@ -23,7 +23,7 @@ export class UserService {
     });
   }
 
-  async createUser(userData: { email: string, lastName: string, firstName: string, password: string}): Promise<users> {
+  async createUser(userData: { email: string, lastName: string, firstName: string, password: string, roleId: number }): Promise<users> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
     return await prisma.users.create({
@@ -32,6 +32,7 @@ export class UserService {
         lastName: userData.lastName,
         firstName: userData.firstName,
         password: hashedPassword,
+        roleId: userData.roleId,
         method_login: "email",
       },
     });

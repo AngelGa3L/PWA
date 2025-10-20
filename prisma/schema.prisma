@@ -21,6 +21,8 @@ model users {
   lastName  String   @db.VarChar(50)
   password  String   @db.VarChar(255)
   method_login String   @db.VarChar(50)
+  roleId      Int
+  role      roles    @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   polls    polls[]
@@ -83,4 +85,5 @@ model roles {
   description String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  users     users[]
 }

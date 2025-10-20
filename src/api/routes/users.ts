@@ -28,6 +28,11 @@ const userValidation = [
     .withMessage(
       "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
     ),
+    body("roleId")
+      .isInt()
+      .withMessage("El ID de rol debe ser un número entero")
+      .notEmpty()
+      .withMessage("El ID de rol es obligatorio"),
   handleValidationErrors,
 ];
 

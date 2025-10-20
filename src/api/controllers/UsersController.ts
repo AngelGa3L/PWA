@@ -27,8 +27,8 @@ export class UsersController {
 
   async createUser(req: Request, res: Response): Promise<void> {
     try {
-      const { email, lastName, firstName, password } = req.body;
-      const newUser = await UserService.createUser({ email, lastName, firstName, password });
+      const { email, lastName, firstName, password, roleId } = req.body;
+      const newUser = await UserService.createUser({ email, lastName, firstName, password, roleId });
       res
         .status(201)
         .json({
@@ -37,6 +37,7 @@ export class UsersController {
             email: newUser.email,
             firstName: newUser.firstName,
             lastName: newUser.lastName,
+            roleId: newUser.roleId,
             createdAt: newUser.createdAt,
           },
           msg: "Usuario creado exitosamente"
