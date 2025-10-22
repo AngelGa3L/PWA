@@ -24,6 +24,14 @@ export class UserService {
   }
 
   async createUser(userData: { email: string, lastName: string, firstName: string, password: string, roleId: number }): Promise<users> {
+    const existingUser = await prisma.users.findUnique({
+      where: { email: userData.email },
+    });
+
+    if (existingUser) {
+      throw new Error("El email ya está registrado");
+    }
+
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
     return await prisma.users.create({
