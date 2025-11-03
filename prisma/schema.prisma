@@ -9,33 +9,38 @@ datasource db {
 }
 
 model users {
-  id           Int         @id @default(autoincrement())
-  email        String      @unique
-  firstName    String      @db.VarChar(50)
-  lastName     String      @db.VarChar(50)
-  password     String      @db.VarChar(255)
-  method_login String      @db.VarChar(50)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  roleId       Int
-  polls        polls[]
-  responses    responses[]
-  role         roles       @relation(fields: [roleId], references: [id])
+  id                  Int             @id @default(autoincrement())
+  email               String          @unique
+  firstName           String          @db.VarChar(50)
+  lastName            String          @db.VarChar(50)
+  password            String          @db.VarChar(255)
+  method_login        String          @db.VarChar(50)
+  biometricEnabled    Boolean         @default(false)
+  biometricPublicKey  String?         @db.Text
+  pushSubscription    String?         @db.Text
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  roleId              Int
+  polls               polls[]
+  responses           responses[]
+  notifications       notifications[]
+  role                roles           @relation(fields: [roleId], references: [id])
 
   @@index([roleId], map: "users_roleId_fkey")
 }
 
 model polls {
-  id          Int         @id @default(autoincrement())
-  title       String      @db.VarChar(100)
-  description String      @db.VarChar(255)
-  status      String      @db.VarChar(50)
-  creatorId   Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  creator     users       @relation(fields: [creatorId], references: [id])
-  questions   questions[]
-  responses   responses[]
+  id            Int             @id @default(autoincrement())
+  title         String          @db.VarChar(100)
+  description   String          @db.VarChar(255)
+  status        String          @db.VarChar(50)
+  creatorId     Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  creator       users           @relation(fields: [creatorId], references: [id])
+  questions     questions[]
+  responses     responses[]
+  notifications notifications[]
 
   @@index([creatorId], map: "polls_creatorId_fkey")
 }
@@ -93,4 +98,19 @@ model roles {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   users       users[]
+}
+
+model notifications {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  pollId    Int
+  title     String   @db.VarChar(100)
+  body      String   @db.VarChar(255)
+  sent      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      users?   @relation(fields: [userId], references: [id])
+  poll      polls    @relation(fields: [pollId], references: [id])
+
+  @@index([userId], map: "notifications_userId_fkey")
+  @@index([pollId], map: "notifications_pollId_fkey")
 }

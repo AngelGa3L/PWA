@@ -1,27 +1,29 @@
 import { Router } from 'express';
 import ResponsesController from '../controllers/ResponsesController';
+import verifyToken from '../middlewares/VerifyToken';
+import { verifyAdmin, verifyAuthenticated } from '../middlewares/VerifyRole';
 
 const router = Router();
 
-// GET /api/responses - Get all responses
-router.get('/', ResponsesController.getAllResponses);
+// GET /api/responses - Get all responses (solo admin)
+router.get('/', verifyToken, verifyAdmin, ResponsesController.getAllResponses);
 
-// GET /api/responses/:id - Get response by ID
-router.get('/:id', ResponsesController.getResponseById);
+// GET /api/responses/:id - Get response by ID (autenticado)
+router.get('/:id', verifyToken, verifyAuthenticated, ResponsesController.getResponseById);
 
-// POST /api/responses - Create new response
-router.post('/', ResponsesController.createResponse);
+// POST /api/responses - Create new response (cualquier usuario autenticado)
+router.post('/', verifyToken, verifyAuthenticated, ResponsesController.createResponse);
 
-// PUT /api/responses/:id - Update response
-router.put('/:id', ResponsesController.updateResponse);
+// PUT /api/responses/:id - Update response (autenticado)
+router.put('/:id', verifyToken, verifyAuthenticated, ResponsesController.updateResponse);
 
-// DELETE /api/responses/:id - Delete response
-router.delete('/:id', ResponsesController.deleteResponse);
+// DELETE /api/responses/:id - Delete response (solo admin)
+router.delete('/:id', verifyToken, verifyAdmin, ResponsesController.deleteResponse);
 
-// GET /api/responses/poll/:pollId - Get responses by poll
-router.get('/poll/:pollId', ResponsesController.getResponsesByPoll);
+// GET /api/responses/poll/:pollId - Get responses by poll (solo admin)
+router.get('/poll/:pollId', verifyToken, verifyAdmin, ResponsesController.getResponsesByPoll);
 
-// GET /api/responses/user/:userId - Get responses by user
-router.get('/user/:userId', ResponsesController.getResponsesByUser);
+// GET /api/responses/user/:userId - Get responses by user (autenticado)
+router.get('/user/:userId', verifyToken, verifyAuthenticated, ResponsesController.getResponsesByUser);
 
 export default router;

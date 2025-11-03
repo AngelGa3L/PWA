@@ -3,6 +3,8 @@ import UsersController from "../controllers/UsersController";
 import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import { handleValidationErrors } from "../middlewares/Validator";
+import verifyToken from "../middlewares/VerifyToken";
+import { verifyAdmin, verifyOwnerOrAdmin } from "../middlewares/VerifyRole";
 
 const router = Router();
 
@@ -36,12 +38,13 @@ const userValidation = [
   handleValidationErrors,
 ];
 
-router.get("/", UsersController.getAllUsers);
-router.get("/:id", UsersController.getUserById);
-router.post("/", userValidation, UsersController.createUser);
-router.put("/:id", UsersController.updateUser);
-router.delete("/:id", UsersController.deleteUser);
-router.get("/:id/polls", UsersController.getUserPolls);
-router.get("/:id/responses", UsersController.getUserResponses);
+// Todas las rutas requieren autenticación
+router.get("/", verifyToken, verifyAdmin, UsersController.getAllUsers);
+router.get("/:id", verifyToken, verifyOwnerOrAdmin, UsersController.getUserById);
+router.post("/", verifyToken, verifyAdmin, userValidation, UsersController.createUser);
+router.put("/:id", verifyToken, verifyOwnerOrAdmin, UsersController.updateUser);
+router.delete("/:id", verifyToken, verifyAdmin, UsersController.deleteUser);
+router.get("/:id/polls", verifyToken, verifyOwnerOrAdmin, UsersController.getUserPolls);
+router.get("/:id/responses", verifyToken, verifyOwnerOrAdmin, UsersController.getUserResponses);
 
 export default router;

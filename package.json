@@ -7,20 +7,25 @@
     "dev": "nodemon --exec ts-node index.ts",
     "start": "node index.js",
     "build": "tsc",
+    "seed": "ts-node prisma/seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AngelGa3L",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.7.1",
+    "@types/web-push": "^3.6.4",
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
