@@ -11,7 +11,7 @@ const vapidKeys = {
 };
 
 webpush.setVapidDetails(
-  "mailto:tu-email@example.com", // Cambia esto por tu email
+  "mailto:angelgaelguevara@gmail.com", // Cambia esto por tu email
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );
