@@ -30,21 +30,36 @@ const userValidation = [
     .withMessage(
       "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
     ),
-    body("roleId")
-      .isInt()
-      .withMessage("El ID de rol debe ser un número entero")
-      .notEmpty()
-      .withMessage("El ID de rol es obligatorio"),
+  body("roleId")
+    .isInt()
+    .withMessage("El ID de rol debe ser un número entero")
+    .notEmpty()
+    .withMessage("El ID de rol es obligatorio"),
   handleValidationErrors,
 ];
 
 // Todas las rutas requieren autenticación
 router.get("/", verifyToken, verifyAdmin, UsersController.getAllUsers);
-router.get("/:id", verifyToken, verifyOwnerOrAdmin, UsersController.getUserById);
-router.post("/", verifyToken, verifyAdmin, userValidation, UsersController.createUser);
+router.get(
+  "/:id",
+  verifyToken,
+  verifyOwnerOrAdmin,
+  UsersController.getUserById
+);
+router.post("/", userValidation, UsersController.createUser);
 router.put("/:id", verifyToken, verifyOwnerOrAdmin, UsersController.updateUser);
 router.delete("/:id", verifyToken, verifyAdmin, UsersController.deleteUser);
-router.get("/:id/polls", verifyToken, verifyOwnerOrAdmin, UsersController.getUserPolls);
-router.get("/:id/responses", verifyToken, verifyOwnerOrAdmin, UsersController.getUserResponses);
+router.get(
+  "/:id/polls",
+  verifyToken,
+  verifyOwnerOrAdmin,
+  UsersController.getUserPolls
+);
+router.get(
+  "/:id/responses",
+  verifyToken,
+  verifyOwnerOrAdmin,
+  UsersController.getUserResponses
+);
 
 export default router;
