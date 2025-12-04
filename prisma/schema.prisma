@@ -76,11 +76,11 @@ model responses {
   pollId     Int
   questionId Int
   userId     Int
-  optionId   Int
+  optionId   Int?
   response   String    @db.VarChar(255)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-  option     options   @relation(fields: [optionId], references: [id])
+  option     options?  @relation(fields: [optionId], references: [id])
   poll       polls     @relation(fields: [pollId], references: [id])
   question   questions @relation(fields: [questionId], references: [id])
   user       users     @relation(fields: [userId], references: [id])
