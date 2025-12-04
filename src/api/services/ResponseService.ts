@@ -82,8 +82,8 @@ export class ResponseService {
     });
   }
 
-  async createResponse(responseData: Omit<responses, 'id' | 'createdAt' | 'updatedAt'>): Promise<responses> {
-    return await prisma.responses.create({
+  async createResponse(responseData: Omit<responses, 'id' | 'createdAt' | 'updatedAt'>): Promise<any> {
+    const response = await prisma.responses.create({
       data: responseData,
       include: {
         user: {
@@ -99,6 +99,34 @@ export class ResponseService {
         option: true,
       },
     });
+
+    // Verificar si el usuario completó todas las preguntas de la encuesta
+    const poll = await prisma.polls.findUnique({
+      where: { id: responseData.pollId },
+      include: {
+        questions: true,
+        responses: {
+          where: {
+            userId: responseData.userId
+          }
+        }
+      }
+    });
+
+    if (poll) {
+      const totalQuestions = poll.questions.length;
+      const answeredQuestions = new Set(poll.responses.map(r => r.questionId)).size;
+      
+      const completed = totalQuestions > 0 && answeredQuestions === totalQuestions;
+      
+      return {
+        ...response,
+        pollCompleted: completed,
+        progress: totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0
+      };
+    }
+
+    return response;
   }
 
   async updateResponse(id: number, responseData: Partial<Omit<responses, 'id' | 'createdAt' | 'updatedAt'>>): Promise<responses> {

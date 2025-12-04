@@ -4,8 +4,16 @@ import PollService from '../services/PollService';
 export class PollsController {
   async getAllPolls(req: Request, res: Response): Promise<void> {
     try {
-      const polls = await PollService.getAllPolls();
-      res.json(polls);
+      const userId = res.locals.user?.id;
+      
+      // Si hay usuario autenticado, devolver con estado de respuestas
+      if (userId) {
+        const polls = await PollService.getPollsForUser(userId);
+        res.json(polls);
+      } else {
+        const polls = await PollService.getAllPolls();
+        res.json(polls);
+      }
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

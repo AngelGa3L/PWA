@@ -1,4 +1,6 @@
 import { PrismaClient, polls, questions, responses } from '../../generated/prisma';
+import NotificationService from './NotificationService';
+import PushNotificationService from './PushNotificationService';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +23,47 @@ export class PollService {
         },
         responses: true,
       },
+    });
+  }
+
+  // Obtener encuestas con estado de respuesta del usuario
+  async getPollsForUser(userId: number): Promise<any[]> {
+    const polls = await prisma.polls.findMany({
+      where: {
+        status: 'active' // Solo encuestas activas
+      },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+        responses: {
+          where: {
+            userId: userId
+          }
+        },
+      },
+    });
+
+    // Agregar campo "completed" a cada encuesta
+    return polls.map(poll => {
+      const totalQuestions = poll.questions.length;
+      const answeredQuestions = new Set(poll.responses.map(r => r.questionId)).size;
+      
+      return {
+        ...poll,
+        completed: totalQuestions > 0 && answeredQuestions === totalQuestions,
+        progress: totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0
+      };
     });
   }
 
