@@ -103,7 +103,8 @@ export class PollService {
   }
 
   async createPoll(pollData: Omit<polls, 'id' | 'createdAt' | 'updatedAt'>): Promise<polls> {
-    return await prisma.polls.create({
+    // 1. Crear la encuesta normalmente
+    const newPoll = await prisma.polls.create({
       data: pollData,
       include: {
         creator: {
@@ -116,6 +117,40 @@ export class PollService {
         },
       },
     });
+
+    // 2. 🔔 ENVIAR NOTIFICACIÓN (Esto es lo nuevo)
+    try {
+      console.log('📢 Iniciando proceso de notificación masiva...');
+
+      // A) Guardar en la base de datos (para historial)
+      await NotificationService.createNotification({
+        pollId: newPoll.id,
+        title: '¡Nueva encuesta disponible!',
+        body: `Participa en: ${newPoll.title}`,
+        userId: undefined, // null = para todos
+      });
+
+      // B) Enviar Push Notification a los celulares
+      // NOTA: Angular Service Worker espera que el objeto tenga una propiedad "notification"
+      await PushNotificationService.sendPushToAll({
+        notification: {
+          title: '¡Nueva encuesta disponible!',
+          body: `${newPoll.title}`,
+          icon: '/assets/icon/favicon.png',
+          vibrate: [100, 50, 100],
+          data: {
+            url: `/tabs/encuestas`,
+            pollId: newPoll.id
+          }
+        }
+      });
+
+      console.log(`✅ Notificaciones enviadas para: ${newPoll.title}`);
+    } catch (error) {
+      console.error('⚠️ Error enviando notificaciones (la encuesta sí se creó):', error);
+    }
+
+    return newPoll;
   }
 
   async updatePoll(id: number, pollData: Partial<Omit<polls, 'id' | 'createdAt' | 'updatedAt'>>): Promise<polls> {

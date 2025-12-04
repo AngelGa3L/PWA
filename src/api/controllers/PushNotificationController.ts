@@ -25,6 +25,8 @@ class PushNotificationController {
       const userId = res.locals.user.id; // Del token JWT
       const { subscription } = req.body;
 
+      console.log('📥 Recibiendo suscripción para usuario ID (desde Token):', userId);
+
       if (!subscription) {
         return res.status(400).json({
           msg: "Subscription es requerida",
@@ -36,11 +38,14 @@ class PushNotificationController {
         JSON.stringify(subscription)
       );
 
+      console.log(`✅ Suscripción guardada correctamente para el usuario ${userId}`);
+
       return res.status(200).json({
         msg: "Suscripción guardada exitosamente",
         data: { userId: user.id },
       });
     } catch (error) {
+      console.error('❌ Error guardando suscripción en DB:', error);
       return res.status(500).json({
         msg: "Error al guardar suscripción",
         error: error instanceof Error ? error.message : error,
