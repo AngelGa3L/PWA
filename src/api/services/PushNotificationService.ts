@@ -20,6 +20,15 @@ class PushNotificationService {
   // Guardar suscripción de usuario
   async saveSubscription(userId: number, subscription: string) {
     try {
+      // Verificar si el usuario existe (Evita errores confusos si el usuario fue borrado)
+      const userExists = await prisma.users.findUnique({
+        where: { id: userId }
+      });
+
+      if (!userExists) {
+        throw new Error(`El usuario ${userId} no existe en la base de datos.`);
+      }
+
       const user = await prisma.users.update({
         where: { id: userId },
         data: { pushSubscription: subscription },
