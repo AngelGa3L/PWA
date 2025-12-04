@@ -12,7 +12,7 @@ router.get('/', verifyToken, verifyAuthenticated, PollsController.getAllPolls);
 router.get('/:id', verifyToken, verifyAuthenticated, PollsController.getPollById);
 
 // POST /api/polls - Create new poll (solo admin)
-router.post('/', verifyToken, verifyAdmin, PollsController.createPoll);
+router.post('/', verifyToken, PollsController.createPoll);
 
 // PUT /api/polls/:id - Update poll (solo admin)
 router.put('/:id', verifyToken, verifyAdmin, PollsController.updatePoll);
@@ -27,6 +27,6 @@ router.get('/:id/questions', verifyToken, verifyAuthenticated, PollsController.g
 router.get('/:id/responses', verifyToken, verifyAdmin, PollsController.getPollResponses);
 
 // GET /api/polls/user/:userId - Get polls by user (solo admin)
-router.get('/user/:userId', verifyToken, verifyAdmin, PollsController.getPollsByUser);
+router.get('/user/:userId', verifyToken, PollsController.getPollsByUser);
 
 export default router;

@@ -58,7 +58,7 @@ export class PollService {
     return polls.map(poll => {
       const totalQuestions = poll.questions.length;
       const answeredQuestions = new Set(poll.responses.map(r => r.questionId)).size;
-      
+
       return {
         ...poll,
         completed: totalQuestions > 0 && answeredQuestions === totalQuestions,
@@ -172,13 +172,20 @@ export class PollService {
 
   async getPollsByUser(userId: number): Promise<polls[]> {
     return await prisma.polls.findMany({
-      where: { creatorId: userId },
+      where: {
+        responses: {
+          some: {
+            userId: userId,  // solo encuestas donde el usuario respondió
+          },
+        },
+      },
       include: {
         questions: true,
         responses: true,
       },
     });
   }
+
 
   async getPollsByStatus(status: string): Promise<polls[]> {
     return await prisma.polls.findMany({
