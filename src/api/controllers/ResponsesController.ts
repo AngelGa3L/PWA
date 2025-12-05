@@ -75,6 +75,35 @@ export class ResponsesController {
       res.status(500).json({ error: error.message });
     }
   }
+  async getResponsesByPollAndUser(req: Request, res: Response): Promise<void> {
+  try {
+    const { pollId, userId } = req.params;
+    const responses = await ResponseService.getResponsesByPollAndUser(
+      parseInt(pollId),
+      parseInt(userId)
+    );
+    res.json(responses);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+  async getAnsweredPollDetails(req: Request, res: Response): Promise<void> {
+    try {
+      const { pollId, userId } = req.params;
+      const details = await ResponseService.getAnsweredPollDetails(
+        parseInt(pollId),
+        parseInt(userId)
+      );
+      if (!details) {
+        res.status(404).json({ error: 'Poll not found' });
+        return;
+      }
+      res.json(details);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default new ResponsesController();

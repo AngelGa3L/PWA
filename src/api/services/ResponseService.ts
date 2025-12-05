@@ -255,6 +255,106 @@ export class ResponseService {
       },
     });
   }
+  async getResponsesByPollAndUser(pollId: number, userId: number) {
+  return await prisma.responses.findMany({
+    where: {
+      pollId,
+      userId
+    },
+    include: {
+      question: {
+        select: {
+          id: true,
+          title: true,
+          type: true
+        }
+      },
+      option: {
+        select: {
+          id: true,
+          text: true
+        }
+      }
+    }
+  });
+}
+
+  async getAnsweredPollDetails(pollId: number, userId: number) {
+    // Trae la encuesta con sus preguntas y opciones, y las respuestas del usuario
+    const poll = await prisma.polls.findUnique({
+      where: { id: pollId },
+      include: {
+        questions: {
+          include: {
+            options: {
+              select: {
+                id: true,
+                text: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!poll) return null;
+
+    const userResponses = await prisma.responses.findMany({
+      where: { pollId, userId },
+      select: {
+        questionId: true,
+        optionId: true,
+        response: true,
+      },
+    });
+
+    // Agrupar respuestas por pregunta (para soportar selección múltiple)
+    const responseMap: Record<number, number[]> = {};
+    const textResponseMap: Record<number, string> = {};
+
+    userResponses.forEach((r) => {
+      if (!responseMap[r.questionId]) {
+        responseMap[r.questionId] = [];
+      }
+      if (r.optionId) {
+        responseMap[r.questionId].push(r.optionId);
+      }
+      if (r.response) {
+        textResponseMap[r.questionId] = r.response;
+      }
+    });
+
+    const questions = poll.questions.map((q) => {
+      const selectedOptionIds = responseMap[q.id] || [];
+      const textResponse = textResponseMap[q.id] || null;
+
+      const options = q.options.map((opt) => ({
+        id: opt.id,
+        text: opt.text,
+        selected: selectedOptionIds.includes(opt.id),
+      }));
+
+      return {
+        id: q.id,
+        title: q.title,
+        type: q.type,
+        options,
+        userResponse: {
+            optionIds: selectedOptionIds,
+            response: textResponse
+        }
+      };
+    });
+
+    return {
+      id: poll.id,
+      title: poll.title,
+      description: poll.description,
+      status: poll.status,
+      questions,
+    };
+  }
+
 }
 
 export default new ResponseService();
