@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import { handleValidationErrors } from "../middlewares/Validator";
 import verifyToken from "../middlewares/VerifyToken";
 import { verifyAdmin, verifyOwnerOrAdmin } from "../middlewares/VerifyRole";
+import verifyTurnstile from "../middlewares/VerifyTurnstile";
 
 const router = Router();
 
@@ -35,6 +36,7 @@ const userValidation = [
     .withMessage("El ID de rol debe ser un número entero")
     .notEmpty()
     .withMessage("El ID de rol es obligatorio"),
+  body('turnstileToken').notEmpty().withMessage('Token de verificación es requerido'),
   handleValidationErrors,
 ];
 
@@ -46,7 +48,7 @@ router.get(
   verifyOwnerOrAdmin,
   UsersController.getUserById
 );
-router.post("/", userValidation, UsersController.createUser);
+router.post("/", userValidation, verifyTurnstile, UsersController.createUser);
 router.put("/:id", verifyToken, verifyOwnerOrAdmin, UsersController.updateUser);
 router.delete("/:id", verifyToken, verifyAdmin, UsersController.deleteUser);
 router.get(

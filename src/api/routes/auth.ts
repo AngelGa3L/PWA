@@ -5,6 +5,7 @@ import { body } from 'express-validator';
 import { handleValidationErrors } from '../middlewares/Validator';
 import verifyToken from '../middlewares/VerifyToken';
 import { verifyAuthenticated } from '../middlewares/VerifyRole';
+import verifyTurnstile from '../middlewares/VerifyTurnstile';
 
 const router = Router();
 
@@ -12,6 +13,7 @@ const router = Router();
 const loginValidation = [
   body('email').isEmail().withMessage('Email válido es requerido'),
   body('password').notEmpty().withMessage('Contraseña es requerida'),
+  body('turnstileToken').notEmpty().withMessage('Token de verificación es requerido'),
   handleValidationErrors
 ];
 
@@ -19,6 +21,7 @@ const loginValidation = [
 const verifyCodeValidation = [
   body('userId').isInt().withMessage('userId es requerido'),
   body('code').isLength({ min: 6, max: 6 }).withMessage('Código de 6 dígitos es requerido'),
+  body('turnstileToken').notEmpty().withMessage('Token de verificación es requerido'),
   handleValidationErrors
 ];
 
@@ -30,10 +33,10 @@ const biometricLoginValidation = [
 ];
 
 // POST /api/auth/login/initiate - Iniciar login (enviar código 2FA)
-router.post('/login/initiate', loginValidation, AuthController.initiateLogin);
+router.post('/login/initiate', loginValidation, verifyTurnstile, AuthController.initiateLogin);
 
 // POST /api/auth/login/verify - Verificar código 2FA y obtener token
-router.post('/login/verify', verifyCodeValidation, AuthController.verifyCode);
+router.post('/login/verify', verifyCodeValidation, verifyTurnstile, AuthController.verifyCode);
 
 // POST /api/auth/login - Login tradicional sin 2FA (mantener por compatibilidad)
 router.post('/login', loginValidation, AuthController.login);
