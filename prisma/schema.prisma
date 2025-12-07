@@ -18,6 +18,8 @@ model users {
   biometricEnabled    Boolean         @default(false)
   biometricPublicKey  String?         @db.Text
   pushSubscription    String?         @db.Text
+  twoFactorCode       String?         @db.VarChar(255)
+  twoFactorExpires    DateTime?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   roleId              Int

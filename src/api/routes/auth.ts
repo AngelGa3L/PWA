@@ -15,6 +15,13 @@ const loginValidation = [
   handleValidationErrors
 ];
 
+// Validaciones para verificar código 2FA
+const verifyCodeValidation = [
+  body('userId').isInt().withMessage('userId es requerido'),
+  body('code').isLength({ min: 6, max: 6 }).withMessage('Código de 6 dígitos es requerido'),
+  handleValidationErrors
+];
+
 // Validaciones para login biométrico
 const biometricLoginValidation = [
   body('email').isEmail().withMessage('Email válido es requerido'),
@@ -22,7 +29,13 @@ const biometricLoginValidation = [
   handleValidationErrors
 ];
 
-// POST /api/auth/login - Login tradicional
+// POST /api/auth/login/initiate - Iniciar login (enviar código 2FA)
+router.post('/login/initiate', loginValidation, AuthController.initiateLogin);
+
+// POST /api/auth/login/verify - Verificar código 2FA y obtener token
+router.post('/login/verify', verifyCodeValidation, AuthController.verifyCode);
+
+// POST /api/auth/login - Login tradicional sin 2FA (mantener por compatibilidad)
 router.post('/login', loginValidation, AuthController.login);
 
 // POST /api/auth/biometric/login - Login con biometría
