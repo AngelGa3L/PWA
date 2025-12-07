@@ -29,9 +29,6 @@ export class PollService {
   // Obtener encuestas con estado de respuesta del usuario
   async getPollsForUser(userId: number): Promise<any[]> {
     const polls = await prisma.polls.findMany({
-      where: {
-        status: 'active' // Solo encuestas activas
-      },
       include: {
         creator: {
           select: {
