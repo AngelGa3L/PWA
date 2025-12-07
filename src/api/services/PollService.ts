@@ -235,6 +235,16 @@ export class PollService {
       },
     });
   }
+
+  /**
+   * Get counts for polls: total, open (status='active') and closed (not 'active')
+   */
+  async getPollCounts(): Promise<{ total: number; open: number; closed: number }> {
+    const total = await prisma.polls.count();
+    const open = await prisma.polls.count({ where: { status: 'active' } });
+    const closed = await prisma.polls.count({ where: { NOT: { status: 'active' } } });
+    return { total, open, closed };
+  }
 }
 
 export default new PollService();

@@ -8,6 +8,9 @@ const router = Router();
 // GET /api/polls - Get all polls (público o autenticado, dependiendo de tu lógica)
 router.get('/', verifyToken, verifyAuthenticated, PollsController.getAllPolls);
 
+// GET /api/polls/stats - Get counts: total, open (active) and closed
+router.get('/stats', verifyToken, verifyAuthenticated, PollsController.getPollStats);
+
 // GET /api/polls/:id - Get poll by ID (autenticado)
 router.get('/:id', verifyToken, verifyAuthenticated, PollsController.getPollById);
 

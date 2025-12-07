@@ -93,6 +93,16 @@ export class PollsController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  // GET /api/polls/stats - return counts for total, open and closed polls
+  async getPollStats(req: Request, res: Response): Promise<void> {
+    try {
+      const counts = await PollService.getPollCounts();
+      res.json(counts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default new PollsController();
